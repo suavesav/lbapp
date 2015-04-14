@@ -13,12 +13,6 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-/**
- * Device list.
- * 
- * @author Lorensius W. L. T <lorenz@londatiga.net>
- *
- */
 public class DeviceListActivity extends Activity {
 	private ListView mListView;
 	private DeviceListAdapter mAdapter;
