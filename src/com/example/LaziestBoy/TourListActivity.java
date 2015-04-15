@@ -1,9 +1,11 @@
 package com.example.LaziestBoy;
 
 import android.app.Activity;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.os.Handler;
@@ -75,9 +77,15 @@ public class TourListActivity extends ListActivity {
 
 
     }
+
     public void onListItemClick(ListView parent, View v, int position, long id)
     {
+        String sel;
         selection.setText(items[position]);
+        sel = items[position];
+        Intent intent = new Intent(TourListActivity.this, MapTestActivity.class);
+        intent.putExtra("selection", sel);
+        startActivity(intent);
     }
 
     private void showToast(String message) {
