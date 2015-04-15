@@ -11,11 +11,12 @@ class ConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    Handler mHandler;
+    private final Handler mHandler;
     final static int MESSAGE_READ = 1;
 
-    public ConnectedThread(BluetoothSocket socket) {
+    public ConnectedThread(BluetoothSocket socket, Handler mmHandler) {
         mmSocket = socket;
+        mHandler = mmHandler;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -44,6 +45,7 @@ class ConnectedThread extends Thread {
                 mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {
+                e.printStackTrace();
                 break;
             }
         }

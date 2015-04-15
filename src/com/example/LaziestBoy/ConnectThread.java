@@ -17,13 +17,14 @@ class ConnectThread extends Thread {
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter mBluetoothAdapter;
     private static final int SUCCESS_CONNECT = 0;
-    Handler mHandler;
+    private final Handler mHandler;
 
-    public ConnectThread(BluetoothDevice device) {
+    public ConnectThread(BluetoothDevice device, Handler mmHandler) {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
         BluetoothSocket tmp = null;
         mmDevice = device;
+        mHandler = mmHandler;
 
         // Get a BluetoothSocket to connect with the given BluetoothDevice
         try {
@@ -39,7 +40,7 @@ class ConnectThread extends Thread {
 
     public void run() {
         // Cancel discovery because it will slow down the connection
-        mBluetoothAdapter.cancelDiscovery();
+        //mBluetoothAdapter.cancelDiscovery();
 
         try {
             // Connect the device through the socket. This will block

@@ -26,7 +26,6 @@ public class TourListActivity extends ListActivity {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final int SUCCESS_CONNECT = 0;
     private static final int MESSAGE_READ = 1;
-    static Handler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +40,7 @@ public class TourListActivity extends ListActivity {
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
         if (devices != null) {
             for (BluetoothDevice device : devices) {
+                showToast("Found Device");
 //                showToast(result.getUuids()[0].getUuid().toString());
                 if (deviceName.equals(device.getName())) {
                     result = device;
@@ -48,28 +48,31 @@ public class TourListActivity extends ListActivity {
                 }
             }
         }
+//
+//        mHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                switch (msg.what){
+//                    case SUCCESS_CONNECT:
+//                        showToast("Connected to device");
+////                        String s = "Application Checking in!";
+//                        break;
+//                    case MESSAGE_READ:
+//                        showToast((String)msg.obj);
+//                        break;
+//                }
+//            }
+//        };
 
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what){
-                    case SUCCESS_CONNECT:
-                        showToast("Connected to device");
-//                        String s = "Application Checking in!";
-                        break;
-                    case MESSAGE_READ:
-                        showToast((String)msg.obj);
-                        break;
-                }
-            }
-        };
+        setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
+        selection = (TextView)findViewById(R.id.selection);
 
-        ConnectThread cThread = new ConnectThread(result);
+        ConnectThread cThread = new ConnectThread(result, mHandler);
         BluetoothSocket mSocket = cThread.getSocket();
         cThread.run();
 
-        ConnectedThread connectedThread = new ConnectedThread(mSocket);
+        ConnectedThread connectedThread = new ConnectedThread(mSocket, mHandler);
         connectedThread.run();
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
@@ -78,6 +81,22 @@ public class TourListActivity extends ListActivity {
 
     }
 
+    private final Handler mHandler = new Handler( new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+//            super.handleMessage(msg);
+            switch (msg.what){
+                case SUCCESS_CONNECT:
+                    showToast("Connected to device");
+//                        String s = "Application Checking in!";
+                    break;
+                case MESSAGE_READ:
+                    showToast((String)msg.obj);
+                    break;
+            }
+            return true;
+        }
+    });
     public void onListItemClick(ListView parent, View v, int position, long id)
     {
         String sel;
