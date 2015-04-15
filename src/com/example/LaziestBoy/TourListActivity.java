@@ -1,6 +1,7 @@
 package com.example.LaziestBoy;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.widget.ArrayAdapter;
@@ -21,9 +22,15 @@ public class TourListActivity extends ListActivity {
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
         selection = (TextView)findViewById(R.id.selection);
     }
+
     public void onListItemClick(ListView parent, View v, int position, long id)
     {
+        String sel;
         selection.setText(items[position]);
+        sel = items[position];
+        Intent intent = new Intent(TourListActivity.this, MapTestActivity.class);
+        intent.putExtra("selection", sel);
+        startActivity(intent);
     }
 
 }
