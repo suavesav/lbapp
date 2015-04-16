@@ -10,10 +10,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/tour_menu"
             android:id="@+id/textView"/>
-    <TextView
-            android:id="@+id/selection"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+
     <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
