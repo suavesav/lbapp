@@ -1,6 +1,5 @@
 package com.example.LaziestBoy;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListActivity;
@@ -28,8 +27,9 @@ public class TourListActivity extends ListActivity {
         String sel;
         selection.setText(items[position]);
         sel = items[position];
-        Intent intent = new Intent(TourListActivity.this, MapTestActivity.class);
+        Intent intent = new Intent(TourListActivity.this, MapActivity.class);
         intent.putExtra("selection", sel);
+        finish();
         startActivity(intent);
     }
 
