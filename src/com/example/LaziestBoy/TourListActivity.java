@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class TourListActivity extends ListActivity {
 //    private List<BluetoothDevice> mPaired;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private static final String TAG = "TourListActivity";
     private static final int SUCCESS_CONNECT = 0;
     private static final int MESSAGE_READ = 1;
 
@@ -46,7 +49,7 @@ public class TourListActivity extends ListActivity {
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
         if (devices != null) {
             for (BluetoothDevice device : devices) {
-                showToast("Found Device");
+//                showToast("Found Device");
 //                showToast(result.getUuids()[0].getUuid().toString());
                 if (deviceName.equals(device.getName())) {
                     result = device;
@@ -75,10 +78,11 @@ public class TourListActivity extends ListActivity {
 
         ConnectThread cThread = new ConnectThread(result);
         BluetoothSocket mSocket = cThread.getSocket();
-        cThread.run();
+        cThread.start();
 
-        ConnectedThread connectedThread = new ConnectedThread(mSocket);
-        connectedThread.run();
+//        ConnectedThread connectedThread =
+        new ConnectedThread(mSocket).start();
+//        connectedThread.run();
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 
@@ -91,11 +95,11 @@ public class TourListActivity extends ListActivity {
 //            super.handleMessage(msg);
             switch (msg.what){
                 case SUCCESS_CONNECT:
-//                    showToast("Connected to device");
+                    showToast("Connected to device");
 //                        String s = "Application Checking in!";
                     break;
                 case MESSAGE_READ:
-//                    showToast((String)msg.obj);
+                    showToast((String)msg.obj);
                     break;
             }
             return true;
@@ -134,6 +138,7 @@ public class TourListActivity extends ListActivity {
                 else
                     tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
+                System.out.println("Error in ConnectThread Constructor\n");
                 e.printStackTrace();
             }
             mmSocket = tmp;
@@ -152,7 +157,12 @@ public class TourListActivity extends ListActivity {
                 // Unable to connect; close the socket and get out
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                    System.out.println("Error in obtaining connection in ConnectThread.\nClosing the socket\n");
+                    connectException.printStackTrace();
+                } catch (IOException closeException) {
+                    System.out.println("Error in ConnectThread run when closing the socket:");
+                    closeException.printStackTrace();
+                }
                 return;
             }
 
@@ -191,37 +201,64 @@ public class TourListActivity extends ListActivity {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                System.out.println("Error in ConnectedThread Constructor:\n");
+                e.printStackTrace();
+            }
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
 
         public void run() {
-            byte[] buffer;  // buffer store for the stream
-            int bytes; // bytes returned from read()
+//            byte[] buffer;  // buffer store for the stream
+//            int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    buffer = new byte[1024];
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
-                } catch (IOException e) {
+                    byte[] buffer = new byte[1024];
+                    String readMessage;
+                    int bytes;
+                    if (mmInStream.available()>2) {
+                        try {
+                            // Read from the InputStream
+                            bytes = mmInStream.read(buffer);
+                            readMessage = new String(buffer, 0, bytes);
+                        }catch (IOException e) {
+                            Log.v(TAG, "disconnected", e);
+                            break;
+                        }
+                        // Send the obtained bytes to the UI Activity
+                        mHandler.obtainMessage(MESSAGE_READ, bytes, -1, readMessage)
+                                .sendToTarget();
+                    }
+                    else
+                        SystemClock.sleep(100);
+
+                } catch (Exception e) {
+                    System.out.println("Error in ConnectedThread run: \n");
                     e.printStackTrace();
                     break;
                 }
+//                    showToast("In Thread");
+                // Read from the InputStream
+//                    bytes = mmInStream.read(buffer);
+                // Send the obtained bytes to the UI activity
+//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();
             }
+
         }
 
         /* Call this from the main activity to send data to the remote device */
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                System.out.println("Error in ConnectedThread Write:\n");
+                e.printStackTrace();
+            }
         }
 
         /* Call this from the main activity to shutdown the connection */
