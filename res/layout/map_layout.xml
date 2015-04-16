@@ -17,6 +17,7 @@ https://developers.google.com/maps/documentation/android/map#using_xml_attribute
                 android:layout_gravity="center_horizontal"
                 android:onClick="btn_prev"/>
 
+
         <fragment
                 android:id="@+id/map"
                 android:layout_width="match_parent"
