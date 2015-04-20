@@ -76,6 +76,7 @@ public class ConnectionActivity extends Activity {
                         showToast("No Paired Devices Found");
                     } else {
 
+
                         mTourBtn.setTextColor(Color.GREEN);
 
                         ArrayList<BluetoothDevice> list = new ArrayList<BluetoothDevice>();
@@ -117,7 +118,13 @@ public class ConnectionActivity extends Activity {
                 @Override
                 public void onClick(View v)
                 {
+
+                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                    ArrayList<BluetoothDevice> list = new ArrayList<BluetoothDevice>();
+                    list.addAll(pairedDevices);
+
                     Intent intent = new Intent(ConnectionActivity.this, TourListActivity.class);
+                    intent.putParcelableArrayListExtra("device.list", list);
 
                     startActivity(intent);
                 }
