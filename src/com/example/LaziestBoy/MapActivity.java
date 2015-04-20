@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class MapActivity extends FragmentActivity {
@@ -126,7 +128,7 @@ public class MapActivity extends FragmentActivity {
 //        startActivity(intent);
 //    }
 
-    private class DistanceThread extends Thread
+    public class DistanceThread extends Thread
     {
         public void run()
         {
@@ -134,6 +136,10 @@ public class MapActivity extends FragmentActivity {
             {
                 try {
                     curPos = mMap.getMyLocation();
+                    LatLng curLatLng = new LatLng(curPos.getLatitude(), curPos.getLongitude());
+                    double dist = CalculationByDistance(curLatLng, LOCATION_ARMS);
+                    TextView tv = (TextView)findViewById(R.id.distance);
+                    tv.setText(Double.toString(dist));
                 }
                 catch(Exception e)
                 {
@@ -141,6 +147,29 @@ public class MapActivity extends FragmentActivity {
                     break;
                 }
             }
+        }
+
+        public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+            int Radius=6371;//radius of earth in Km
+            double lat1 = StartP.latitude;
+            double lat2 = EndP.latitude;
+            double lon1 = StartP.longitude;
+            double lon2 = EndP.longitude;
+            double dLat = Math.toRadians(lat2-lat1);
+            double dLon = Math.toRadians(lon2-lon1);
+            double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                            Math.sin(dLon/2) * Math.sin(dLon/2);
+            double c = 2 * Math.asin(Math.sqrt(a));
+            double valueResult= Radius*c;
+            double km=valueResult/1;
+            DecimalFormat newFormat = new DecimalFormat("####");
+            int kmInDec =  Integer.valueOf(newFormat.format(km));
+            double meter=valueResult%1000;
+            int  meterInDec= Integer.valueOf(newFormat.format(meter));
+            Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec + " Meter   " + meterInDec);
+
+            return Radius * c;
         }
     }
 
@@ -163,6 +192,8 @@ public class MapActivity extends FragmentActivity {
                             .position(entry.getValue())
                             .title(entry.getKey()));
                     tour_markers.add(marker);
+                    DistanceThread dt = new DistanceThread();
+                    dt.start();
                 }
                 break;
             case(FOUNTAIN):
@@ -173,6 +204,8 @@ public class MapActivity extends FragmentActivity {
                                     .position(entry.getValue())
                                     .title(entry.getKey()));
                     tour_markers.add(marker);
+                    DistanceThread dt = new DistanceThread();
+                    dt.start();
                 }
                 break;
         }
