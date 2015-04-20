@@ -75,10 +75,10 @@ public class TourListActivity extends ListActivity {
 
         ConnectThread cThread = new ConnectThread(result);
         BluetoothSocket mSocket = cThread.getSocket();
-        cThread.run();
+        cThread.start();
 
         ConnectedThread connectedThread = new ConnectedThread(mSocket);
-        connectedThread.run();
+        connectedThread.start();
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 
@@ -91,11 +91,12 @@ public class TourListActivity extends ListActivity {
 //            super.handleMessage(msg);
             switch (msg.what){
                 case SUCCESS_CONNECT:
-//                    showToast("Connected to device");
+                    showToast("Connected to LaziestBoy");
 //                        String s = "Application Checking in!";
                     break;
                 case MESSAGE_READ:
-//                    showToast((String)msg.obj);
+//                    showToast("Message has been read");
+                    showToast((String)msg.obj);
                     break;
             }
             return true;
@@ -204,18 +205,25 @@ public class TourListActivity extends ListActivity {
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    buffer = new byte[1024];
+                    buffer = new byte[128];
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    String s = new String(buffer);
                     // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    mHandler.obtainMessage(MESSAGE_READ, s).sendToTarget();
+
                 } catch (IOException e) {
                     e.printStackTrace();
-                    break;
+                    //                    buffer = new byte[1024];
+                    // Read from the InputStream
+//                    bytes = mmInStream.read(buffer);
+                    // Send the obtained bytes to the UI activity
+//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+//                    break;
                 }
             }
         }
+
 
         /* Call this from the main activity to send data to the remote device */
         public void write(byte[] bytes) {
