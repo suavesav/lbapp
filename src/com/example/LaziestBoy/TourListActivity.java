@@ -28,6 +28,7 @@ public class TourListActivity extends ListActivity {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final int SUCCESS_CONNECT = 0;
     private static final int MESSAGE_READ = 1;
+    public String rec_msg = "";
 
     private static final String[] items = {"Official Campus Tour", "Sports Tour", "Dorms Tour", "Engineering Tour", "Fountain Run", "Select Destination"};
     /**
@@ -54,22 +55,6 @@ public class TourListActivity extends ListActivity {
                 }
             }
         }
-//
-//        mHandler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                switch (msg.what){
-//                    case SUCCESS_CONNECT:
-//                        showToast("Connected to device");
-////                        String s = "Application Checking in!";
-//                        break;
-//                    case MESSAGE_READ:
-//                        showToast((String)msg.obj);
-//                        break;
-//                }
-//            }
-//        };
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 
@@ -96,7 +81,9 @@ public class TourListActivity extends ListActivity {
                     break;
                 case MESSAGE_READ:
 //                    showToast("Message has been read");
-                    showToast((String)msg.obj);
+                    rec_msg += ((String)msg.obj);
+//                    if(rec_msg.substring(rec_msg.length()-1).equals(""))
+                    showToast(rec_msg.substring(rec_msg.length()-10, rec_msg.length()-1));
                     break;
             }
             return true;
@@ -205,12 +192,12 @@ public class TourListActivity extends ListActivity {
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    buffer = new byte[128];
+                    buffer = new byte[16];
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     String s = new String(buffer);
                     // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, s).sendToTarget();
+                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, s).sendToTarget();
 
                 } catch (IOException e) {
                     e.printStackTrace();
