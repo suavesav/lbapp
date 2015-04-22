@@ -79,6 +79,7 @@ public class MapActivity extends FragmentActivity {
     private static final int RES_HALLS = 2;
     private static final int ENGINEERING = 3;
     private static final int FOUNTAIN = 4;
+    DistanceThread dt = new DistanceThread();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class MapActivity extends FragmentActivity {
         mMap.setMyLocationEnabled(true);
         goToPurdue();
         loadMarkers(tourType);
-
+        dt.start();
 
 
     }
@@ -130,6 +131,10 @@ public class MapActivity extends FragmentActivity {
 
     public class DistanceThread extends Thread
     {
+        public DistanceThread()
+        {
+            TextView tv = (TextView)findViewById(R.id.distance);
+        }
         public void run()
         {
             while(true)
@@ -138,11 +143,12 @@ public class MapActivity extends FragmentActivity {
                     curPos = mMap.getMyLocation();
                     LatLng curLatLng = new LatLng(curPos.getLatitude(), curPos.getLongitude());
                     double dist = CalculationByDistance(curLatLng, LOCATION_ARMS);
-                    TextView tv = (TextView)findViewById(R.id.distance);
-                    tv.setText(Double.toString(dist));
+                    tv.setText("Not changing");
                 }
                 catch(Exception e)
                 {
+                    TextView tv = (TextView)findViewById(R.id.distance);
+                    tv.setText(Double.toString(dist));
                     e.printStackTrace();
                     break;
                 }
@@ -192,8 +198,6 @@ public class MapActivity extends FragmentActivity {
                             .position(entry.getValue())
                             .title(entry.getKey()));
                     tour_markers.add(marker);
-                    DistanceThread dt = new DistanceThread();
-                    dt.start();
                 }
                 break;
             case(FOUNTAIN):
@@ -204,8 +208,6 @@ public class MapActivity extends FragmentActivity {
                                     .position(entry.getValue())
                                     .title(entry.getKey()));
                     tour_markers.add(marker);
-                    DistanceThread dt = new DistanceThread();
-                    dt.start();
                 }
                 break;
         }
