@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class TourListActivity extends ListActivity {
-//    private List<BluetoothDevice> mPaired;
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final int SUCCESS_CONNECT = 0;
     private static final int MESSAGE_READ = 1;
@@ -82,8 +81,11 @@ public class TourListActivity extends ListActivity {
                 case MESSAGE_READ:
 //                    showToast("Message has been read");
                     rec_msg += ((String)msg.obj);
-//                    if(rec_msg.substring(rec_msg.length()-1).equals(""))
-                    showToast(rec_msg.substring(rec_msg.length()-10, rec_msg.length()-1));
+                    if(!((String)msg.obj).substring(msg.arg1-1).equals(";")) {
+//                    if(msg.arg1>1){
+                        showToast(rec_msg);
+                        rec_msg = "";
+                    }
                     break;
             }
             return true;
