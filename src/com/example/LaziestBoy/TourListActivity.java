@@ -38,9 +38,8 @@ public class TourListActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tourlist);
 
-//        mPaired = getIntent().getExtras().getParcelableArrayList("device.list");
+        //Check that the Laziest Boy is paired before trying to connect
         String deviceName = "LAZIESTBOY";
-//
         BluetoothDevice result = null;
 
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
@@ -57,22 +56,25 @@ public class TourListActivity extends ListActivity {
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 
+        //Connect
         ConnectThread cThread = new ConnectThread(result);
         BluetoothSocket mSocket = cThread.getSocket();
         cThread.start();
 
+        //Handle Connection
         ConnectedThread connectedThread = new ConnectedThread(mSocket);
         connectedThread.start();
+
 
         setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 
 
     }
 
+    //Message Handler that processes incoming messages
     private final Handler mHandler = new Handler( new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-//            super.handleMessage(msg);
             switch (msg.what){
                 case SUCCESS_CONNECT:
                     showToast("Connected to LaziestBoy");
@@ -81,8 +83,8 @@ public class TourListActivity extends ListActivity {
                 case MESSAGE_READ:
 //                    showToast("Message has been read");
                     rec_msg += ((String)msg.obj);
-                    if(!((String)msg.obj).substring(msg.arg1-1).equals(";")) {
-//                    if(msg.arg1>1){
+
+                    if (((String)msg.obj).substring(msg.arg1 - 1, msg.arg1).equalsIgnoreCase(";")) {
                         showToast(rec_msg);
                         rec_msg = "";
                     }
@@ -103,19 +105,18 @@ public class TourListActivity extends ListActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    //Thread to establish the connection to the Laziest Boy
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
         //Set to Laziest Boy's UUID as default
         private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-//        private final Handler mHandler;
 
         public ConnectThread(BluetoothDevice device) {
             // Use a temporary object that is later assigned to mmSocket,
             // because mmSocket is final
             BluetoothSocket tmp = null;
             mmDevice = device;
-//            mHandler = mmHandler;
 
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
@@ -163,16 +164,15 @@ public class TourListActivity extends ListActivity {
         }
     }
 
+    //Thread to dictate what happens to the bluetooth connection once its connected
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-//        private final Handler mHandler;
 
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
-//            mHandler = mmHandler;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
@@ -203,11 +203,6 @@ public class TourListActivity extends ListActivity {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    //                    buffer = new byte[1024];
-                    // Read from the InputStream
-//                    bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 //                    break;
                 }
             }
