@@ -1,6 +1,5 @@
 package com.example.LaziestBoy;
 
-import android.app.Activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.app.ListActivity;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.ListView;
 import android.view.View;
 import android.widget.Toast;
@@ -19,7 +17,6 @@ import android.os.Message;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
