@@ -36,7 +36,7 @@ public class TourListActivity extends ListActivity {
         setContentView(R.layout.tourlist);
 
         //Check that the Laziest Boy is paired before trying to connect
-        String deviceName = "LAZIESTBOY";
+        String deviceName = "RNBT-64ED";
         BluetoothDevice result = null;
 
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
