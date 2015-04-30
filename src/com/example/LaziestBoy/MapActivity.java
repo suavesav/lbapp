@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,6 +46,7 @@ public class MapActivity extends FragmentActivity {
     private final LatLng LOCATION_GRSM = new LatLng(40.426413737489504, -86.91062092781067);
     private final LatLng LOCATION_MATH = new LatLng(40.42616463702737, -86.91555619239807);
     private final LatLng LOCATION_LWSN = new LatLng(40.427299874278106, -86.9167149066925);
+    private TextView dtv;
 
     private final HashMap<String,LatLng> fountainRunTour = new HashMap<String, LatLng>(){{
         put("Engineering Fountain", LOCATION_ENGR_FOUNTAIN);
@@ -85,6 +87,8 @@ public class MapActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
+
+        dtv = (TextView)findViewById(R.id.distance);
         tourType = getIntent().getExtras().getInt("selection");
 
         setUpMapIfNeeded();
@@ -131,10 +135,6 @@ public class MapActivity extends FragmentActivity {
 
     public class DistanceThread extends Thread
     {
-        public DistanceThread()
-        {
-            TextView tv = (TextView)findViewById(R.id.distance);
-        }
         public void run()
         {
             while(true)
@@ -143,12 +143,13 @@ public class MapActivity extends FragmentActivity {
                     curPos = mMap.getMyLocation();
                     LatLng curLatLng = new LatLng(curPos.getLatitude(), curPos.getLongitude());
                     double dist = CalculationByDistance(curLatLng, LOCATION_ARMS);
-                    tv.setText("Not changing");
+                    showToast(Double.toString(dist));
+                    TextView tv = (TextView)findViewById(R.id.distance);
+                    tv.setText(Double.toString(dist));
+//                    dtv.setText("Not changing");
                 }
                 catch(Exception e)
                 {
-                    TextView tv = (TextView)findViewById(R.id.distance);
-                    tv.setText(Double.toString(dist));
                     e.printStackTrace();
                     break;
                 }
@@ -177,6 +178,10 @@ public class MapActivity extends FragmentActivity {
 
             return Radius * c;
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     public void loadMarkers(int tourType)
@@ -213,15 +218,3 @@ public class MapActivity extends FragmentActivity {
         }
     }
 }
-
-//    public void onMapReady(GoogleMap map) {
-//        LatLng sydney = new LatLng(-33.867, 151.206);
-//
-//        map.setMyLocationEnabled(true);
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-//
-//        map.addMarker(new MarkerOptions()
-//                .title("Sydney")
-//                .snippet("The most populous city in Australia.")
-//                .position(sydney));
-//    }
