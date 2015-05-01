@@ -104,6 +104,8 @@ public class MapActivity extends FragmentActivity {
         tourType = getIntent().getExtras().getInt("selection");
 
         String deviceName = "RNBT-64ED";
+//        String deviceName = "LAZIESTBOY";
+
         BluetoothDevice result = null;
 
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
@@ -229,10 +231,8 @@ public class MapActivity extends FragmentActivity {
 //                    showToast("Message has been read");
                     rec_msg += ((String)msg.obj);
 
-                    if (((String)msg.obj).substring(msg.arg1 - 1, msg.arg1).equalsIgnoreCase(";")) {
-                        spd.setText(rec_msg.substring(0,10));
-                        showToast(rec_msg.substring(1));
-//                        bat.setText((rec_msg).substring(4, 5));
+                    if (((String)msg.obj).substring(msg.arg1 - 1, msg.arg1).equalsIgnoreCase("%")) {
+                        spd.setText(rec_msg.substring(0));
                         rec_msg = "";
                     }
                     break;

@@ -28,7 +28,7 @@ https://developers.google.com/maps/documentation/android/map#using_xml_attribute
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/speed"
                 android:layout_alignLeft="@id/map" android:layout_alignParentBottom="true"
                 android:background="#96c1c1c1" android:textColor="#ffd41927" android:textStyle="bold"/>
