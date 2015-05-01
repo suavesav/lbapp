@@ -98,7 +98,6 @@ public class MapActivity extends FragmentActivity {
         loadMarkers(tourType);
         dt.start();
 
-
     }
 
 
@@ -116,8 +115,6 @@ public class MapActivity extends FragmentActivity {
         if (mMap == null) {
             return;
         }
-        // Initialize map options. For example:
-        // mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     public void goToPurdue()
@@ -126,12 +123,6 @@ public class MapActivity extends FragmentActivity {
         mMap.animateCamera(update);
     }
 
-//    public void btn_prev(View v)
-//    {
-//        Intent intent = new Intent(MapActivity.this, TourListActivity.class);
-//        finish();
-//        startActivity(intent);
-//    }
 
     public class DistanceThread extends Thread
     {
