@@ -100,7 +100,6 @@ public class MapActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
-        dtv = (TextView)findViewById(R.id.distance);
         spd = (TextView)findViewById(R.id.speed);
         tourType = getIntent().getExtras().getInt("selection");
 
@@ -114,6 +113,7 @@ public class MapActivity extends FragmentActivity {
             for (BluetoothDevice device : devices) {
 //                showToast(result.getUuids()[0].getUuid().toString());
                 if (deviceName.equals(device.getName())) {
+                    showToast("Found Device");
                     result = device;
                     break;
                 }
@@ -135,8 +135,6 @@ public class MapActivity extends FragmentActivity {
         goToPurdue();
         loadMarkers(tourType);
         dt.start();
-
-
     }
 
 
@@ -170,12 +168,11 @@ public class MapActivity extends FragmentActivity {
             while(true)
             {
                 try {
+
                     curPos = mMap.getMyLocation();
                     LatLng curLatLng = new LatLng(curPos.getLatitude(), curPos.getLongitude());
                     double dist = CalculationByDistance(curLatLng, LOCATION_ARMS);
-                    showToast(Double.toString(dist));
-                    TextView tv = (TextView)findViewById(R.id.distance);
-                    tv.setText(Double.toString(dist));
+
 //                    dtv.setText("Not changing");
                 }
                 catch(Exception e)
@@ -205,7 +202,6 @@ public class MapActivity extends FragmentActivity {
             double meter=valueResult%1000;
             int  meterInDec= Integer.valueOf(newFormat.format(meter));
             Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec + " Meter   " + meterInDec);
-
             return Radius * c;
         }
     }
@@ -389,4 +385,6 @@ public class MapActivity extends FragmentActivity {
                 break;
         }
     }
+
+
 }
